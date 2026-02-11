@@ -1,1 +1,2 @@
 INTERNAL_IP = "10.", "192.168."
+SENSITIVE_PORT = "22", "23", "3389"
