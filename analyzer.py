@@ -21,12 +21,18 @@ def tag_large_packets(data):
     tag_list = [log + ["LARGE"] if is_large_packet(int(log[5])) else log + ["NORMAL"] for log in data]
     return tag_list
 
-d = csv_list_load("network_traffic.log")
+
 def count_requests_by_ip(data):
     ip_counts = {}
     for log in data:
         ip_counts[log[1]] = ip_counts.get(log[1],0) + 1
     return ip_counts
-print(count_requests_by_ip(d))
 
+
+def port_to_protocol_mapping(data):
+    mapping_dict = {log[3] : log[4] for log in data}
+    return mapping_dict
+
+
+d = csv_list_load("network_traffic.log")
 
