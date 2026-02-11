@@ -7,4 +7,3 @@ def csv_list_load(filename):
 
 
 
-
