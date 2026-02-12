@@ -1,4 +1,4 @@
-from checks import is_external_ip, is_sensitive_port, is_large_packet
+from checks import is_external_ip, is_sensitive_port, is_large_packet,is_night_active
 from reader import csv_list_load
 
 
@@ -34,5 +34,35 @@ def port_to_protocol_mapping(data):
     return mapping_dict
 
 
+
+def suspicion_detection(data):
+    suspicions_dict = {}
+
+    for log in data:
+        suspicions_list = []
+
+        time = log[0].split()[1]
+        if is_night_active(time.split(":")[0]):
+            suspicions_list.append("NIGHT_ACTIVITY")
+
+        if is_external_ip(log[1]):
+            suspicions_list.append("EXTERNAL_IP")
+
+        if is_sensitive_port(log[3]):
+            suspicions_list.append("SENSITIVE_PORT")
+
+        if is_large_packet(int(log[5])):
+            suspicions_list.append("LARGE PACKET")
+        if suspicions_list:
+            suspicions_dict[log[1]] = suspicions_list
+
+    return suspicions_dict
+
+
 d = csv_list_load("network_traffic.log")
+
+
+
+
+
 
