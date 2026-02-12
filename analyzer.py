@@ -38,28 +38,37 @@ def port_to_protocol_mapping(data):
 def suspicion_detection(data):
     suspicions_dict = {}
 
-    for log in data:
-        suspicions_list = []
+    ips_set = {log[1] for log in data}
+    for ip in ips_set:
 
-        time = log[0].split()[1]
-        if is_night_active(time.split(":")[0]):
-            suspicions_list.append("NIGHT_ACTIVITY")
+        for log in data:
+            suspicions_list = []
+            if ip == log[1]:
+                time = log[0].split()[1]
+                if is_night_active(time.split(":")[0]):
+                    suspicions_list.append("NIGHT_ACTIVITY")
 
-        if is_external_ip(log[1]):
-            suspicions_list.append("EXTERNAL_IP")
+                if is_external_ip(log[1]):
+                    suspicions_list.append("EXTERNAL_IP")
 
-        if is_sensitive_port(log[3]):
-            suspicions_list.append("SENSITIVE_PORT")
+                if is_sensitive_port(log[3]):
+                    suspicions_list.append("SENSITIVE_PORT")
 
-        if is_large_packet(int(log[5])):
-            suspicions_list.append("LARGE PACKET")
-        if suspicions_list:
-            suspicions_dict[log[1]] = suspicions_list
+                if is_large_packet(int(log[5])):
+                    suspicions_list.append("LARGE PACKET")
+                if suspicions_list:
+                    suspicions_dict[log[1]] = suspicions_list
 
     return suspicions_dict
 
-
 d = csv_list_load("network_traffic.log")
+sus = suspicion_detection(d)
+
+def suspicion_filtering(suspicions):
+    filtered_dict = {ip : suspicions for ip, suspicions in suspicions.items() if len(suspicions) > 1}
+    return filtered_dict
+
+
 
 
 
