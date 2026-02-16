@@ -62,3 +62,5 @@ extracting_time = list(map(lambda log: log[0].split()[1].split(":")[0], d))
 
 package_size_conversion = list(map(lambda log: f"{int(log[5]) / 1024:.3f}", d))
 
+
+filter_rows_by_port = list(filter(lambda log: is_sensitive_port(log[3]), d))
