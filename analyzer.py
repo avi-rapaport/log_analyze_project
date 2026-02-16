@@ -54,3 +54,9 @@ def suspicion_detection(data):
 def suspicion_filtering(suspicions):
     filtered_dict = {ip: suspicions for ip, suspicions in suspicions.items() if len(suspicions) > 1}
     return filtered_dict
+
+d = csv_list_load("network_traffic.log")
+
+extracting_time = list(map(lambda log: log[0].split()[1].split(":")[0], d))
+
+
