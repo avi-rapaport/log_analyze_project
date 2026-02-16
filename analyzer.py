@@ -54,3 +54,22 @@ def suspicion_detection(data):
 def suspicion_filtering(suspicions):
     filtered_dict = {ip: suspicions for ip, suspicions in suspicions.items() if len(suspicions) > 1}
     return filtered_dict
+
+
+extracting_time = lambda data: list(map(lambda log: log[0].split()[1].split(":")[0], data))
+
+package_size_conversion = lambda data: list(map(lambda log: f"{int(log[5]) / 1024:.3f}", data))
+
+filter_rows_by_port = lambda data: list(filter(lambda log: is_sensitive_port(log[3]), data))
+
+night_activity_filtering = lambda data: list(filter(lambda log: is_night_active(log[0].split()[1].split(":")[0]), data))
+
+suspicion_checker = {"EXTERNAL_IP": lambda log: is_external_ip(log[1]),
+                     "SENSITIVE_PORT": lambda log: is_sensitive_port(log[3]),
+                     "LARGE_PACKET": lambda log: is_large_packet(int(log[5])),
+                     "NIGHT_ACTIVITY": lambda log: is_night_active(log[0].split()[1].split(":")[0])}
+
+check_row = lambda row, checker: list(filter(lambda key: checker[key](row), checker.keys()))
+
+processing_the_entire_log = lambda data: list(
+    filter(lambda item: item[1], (map(lambda row: (row, check_row(row, suspicion_checker)), data))))
